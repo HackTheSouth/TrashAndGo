@@ -1,17 +1,42 @@
+import re
+
 from pyzbar.pyzbar import decode
 from PIL import Image
+import requests
+from bs4 import BeautifulSoup as bs
+
+
+
+class Product():
+    PARSED_DATA = ""
+
+    def __init__(self, barcode_data):
+        self.barcode_number = barcode_data[0]
+        self.barcode_type = barcode_data[1]
+        self.product_name = self.parse_product_name()
+    
+    def parse_product_name(self):
+        app_url = 'https://www.barcodable.com/upc/' + self.barcode_number
+        page = requests.get(app_url)
+        soup = bs(page.content, 'html.parser')
+
+        result = re.search('\- (.*) \(', str(soup.head.title))
+
+        if not result:
+            return 'Unknown Product'
+
+        return result.group(1)
 
 
 class BarcodeInformationExtractor():
     """Takes in a barcode and returns a list of tuples (barcode, type)"""
     def __init__(self, image):
-        self.decoded_barcodes = decode(Image.open(image))
-        self.barcode_list = [(D.data.decode("utf-8") , D.type) for D in self.decoded_barcodes]
-    
-    """Returns the list of tuples containing the barcode data"""
-    def get_barcode_list(self):
-        return str(self.barcode_list)   
+        decoded_barcodes = decode(Image.open(image))
+        raw_barcode_list = [(D.data.decode("utf-8") , D.type) for D in decoded_barcodes]
+        self.barcode_list = [Product(barcode) for barcode in raw_barcode_list]
 
 
-bie = BarcodeInformationExtractor('C:\\Users\\Akhilesh\\Desktop\\TrashAndGo\\barcode.jpg')
-print(bie)
+items = BarcodeInformationExtractor('C:\\Users\\Akhilesh\\Desktop\\TrashAndGo\\barcode3.jpg').barcode_list
+for item in items:
+    print(item.barcode_number)
+    print(item.product_name)
