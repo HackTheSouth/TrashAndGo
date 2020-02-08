@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, send_from_directory
 import csv
-#from PIL import Image
+from PIL import Image
+import io
 import json
 import base64
 import time
@@ -11,27 +12,6 @@ port = 2000
 
 #word = Words("C:\\Users\\sohai\\PycharmProjects\\TrashAndGoServer\\words_rec.jpg")
 
-"""
-@app.route('/trashandgo/image', methods=['POST'])
-def image():
-    file = open("words_rec.jpg", "wb")
-    #y = request.get_data()
-    #print(y)
-
-    temp = request.get_data().decode("utf-8").split(":")[1]
-    temp = temp.replace("\"", "")
-    temp = temp.replace("}", "")
-
-    temp2 = request.get_data().decode("utf-8").split(":")[0]
-    temp2 = temp2.replace("\"", "")
-    temp2 = temp2.replace("}", "")
-    temp2 = temp2.replace("{", "")
-#    word.set_cache(temp2)
-
-    file.write(base64.decodebytes(temp.encode("utf-8")))
-    file.close()
-    return ""
-"""
 
 @app.route('/trashandgo')
 def handright():
@@ -43,11 +23,17 @@ def getDistances():
     x = open("simple_locations.txt", "r")
     return x.read()
 
+@app.route('/trashandgo/image', methods=['POST'])
+def image():
+    y = request.get_data()
+    # image = Image.open(io.BytesIO(bytes))
+    # image.save()
 
-@app.route('/trashandgo/feed')
-def feed():
-    return send_from_directory("", "words_rec.jpg")
+    image_data = base64.b64encode(y)
+    with open ("bruh.png", "wb") as file:
+        file.write(base64.decodebytes(image_data))
 
+    return y
 
 @app.route('/trashandgo/meme')
 def lul():
