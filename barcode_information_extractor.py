@@ -5,10 +5,6 @@ from PIL import Image
 import requests
 from bs4 import BeautifulSoup as bs
 
-class CSVWriter():
-    def __init__(self, barcode_data):
-        pass
-
 
 class Product():
     def __init__(self, barcode_data):
