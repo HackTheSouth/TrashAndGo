@@ -39,12 +39,17 @@ class Product():
 class BarcodeInformationExtractor():
     """Takes in a barcode and returns a list of tuples (barcode, type)"""
     def __init__(self):
-        self.used = set()
+        self.used_barcodes = set()
 
     def scan_barcode(self, image):
-        decoded_barcodes = decode(Image.open(image))
+        decoded_barcodes = decode(Image.open(image))    
         raw_barcode_list = [(D.data.decode("utf-8") , D.type) for D in decoded_barcodes]
         self.barcode_list = [Product(barcode) for barcode in raw_barcode_list]
+        new_barcode_list = [barcode for barcode in self.barcode_list if barcode.barcode_number not in self.used_barcodes]
+        self.barcode_list = new_barcode_list
+
+        for barcode in self.barcode_list:
+            self.used_barcodes.add(barcode.barcode_number)
 
 
 items = BarcodeInformationExtractor('C:\\Users\\Akhilesh\\Desktop\\TrashAndGo\\barcode_images\\barcode9.jpg').barcode_list
