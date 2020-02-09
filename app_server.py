@@ -5,6 +5,7 @@ import io
 import json
 import base64
 import time
+from barcode_information_extractor import Product,BarcodeInformationExtractor
 
 
 app = Flask(__name__)
@@ -33,7 +34,17 @@ def image():
     with open ("bruh.png", "wb") as file:
         file.write(base64.decodebytes(image_data))
 
-    return y
+    items = BarcodeInformationExtractor("bruh.png").barcode_list
+    output = ""
+
+    print("here")
+    for item in items:
+        print("loop")
+        output += item.barcode_number + ","+ item.product_name + ":"
+        print(item.barcode_number)
+        print(item.product_name)
+    print(output)
+    return output
 
 @app.route('/trashandgo/meme')
 def lul():
