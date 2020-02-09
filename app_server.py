@@ -10,7 +10,7 @@ from barcode_information_extractor import Product,BarcodeInformationExtractor
 
 app = Flask(__name__)
 port = 2000
-
+bruhtems = BarcodeInformationExtractor()
 #word = Words("C:\\Users\\sohai\\PycharmProjects\\TrashAndGoServer\\words_rec.jpg")
 
 
@@ -34,7 +34,7 @@ def image():
     with open ("bruh.png", "wb") as file:
         file.write(base64.decodebytes(image_data))
 
-    items = BarcodeInformationExtractor("bruh.png").barcode_list
+    items = bruhtems.scan_barcode("bruh.png")
     output = ""
 
     print("here")
@@ -44,6 +44,8 @@ def image():
         print(item.barcode_number)
         print(item.product_name)
     print(output)
+    if output == "":
+        return "error"
     return output
 
 @app.route('/trashandgo/meme')
