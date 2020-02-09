@@ -15,7 +15,6 @@ class Product():
         self.barcode_number = barcode_data[0]
         self.barcode_type = barcode_data[1]
         self.product_name = self.parse_product_name_hardcoded()
-        self.points = self.calculate_points_for_barcode()
 
     def parse_product_name(self):
         app_url = 'https://www.barcodable.com/ean/' + self.barcode_number
@@ -31,9 +30,7 @@ class Product():
     
     def parse_product_name_hardcoded(self):
         return "Bruh Cheese"
-    
-    def calculate_points_for_barcode(self):
-        return (self.barcode_number % 5) + 5
+
 
 
 class BarcodeInformationExtractor():
@@ -44,15 +41,10 @@ class BarcodeInformationExtractor():
     def scan_barcode(self, image):
         decoded_barcodes = decode(Image.open(image))    
         raw_barcode_list = [(D.data.decode("utf-8") , D.type) for D in decoded_barcodes]
-        self.barcode_list = [Product(barcode) for barcode in raw_barcode_list]
-        new_barcode_list = [barcode for barcode in self.barcode_list if barcode.barcode_number not in self.used_barcodes]
-        self.barcode_list = new_barcode_list
+        barcode_list = [Product(barcode) for barcode in raw_barcode_list]
+        new_barcode_list = [barcode for barcode in barcode_list if barcode.barcode_number not in self.used_barcodes]
+        barcode_list = new_barcode_list
 
-        for barcode in self.barcode_list:
+        for barcode in barcode_list:
             self.used_barcodes.add(barcode.barcode_number)
-
-
-items = BarcodeInformationExtractor('C:\\Users\\Akhilesh\\Desktop\\TrashAndGo\\barcode_images\\barcode9.jpg').barcode_list
-for item in items:
-    print(item.barcode_number)
-    print(item.product_name)
+        return barcode_list
