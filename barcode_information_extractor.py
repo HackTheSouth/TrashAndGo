@@ -5,18 +5,20 @@ from PIL import Image
 import requests
 from bs4 import BeautifulSoup as bs
 
+class CSVWriter():
+    def __init__(self, barcode_data):
+        pass
 
 
 class Product():
-    PARSED_DATA = ""
-
     def __init__(self, barcode_data):
         self.barcode_number = barcode_data[0]
         self.barcode_type = barcode_data[1]
-        self.product_name = self.parse_product_name()
-    
+        self.product_name = self.parse_product_name_hardcoded()
+        self.points = self.calculate_points_for_barcode()
+
     def parse_product_name(self):
-        app_url = 'https://www.barcodable.com/upc/' + self.barcode_number
+        app_url = 'https://www.barcodable.com/ean/' + self.barcode_number
         page = requests.get(app_url)
         soup = bs(page.content, 'html.parser')
 
@@ -26,6 +28,12 @@ class Product():
             return 'Unknown Product'
 
         return result.group(1)
+    
+    def parse_product_name_hardcoded(self):
+        return "Bruh Cheese"
+    
+    def calculate_points_for_barcode(self):
+        return (self.barcode_number % 5) + 5
 
 
 class BarcodeInformationExtractor():
@@ -36,7 +44,7 @@ class BarcodeInformationExtractor():
         self.barcode_list = [Product(barcode) for barcode in raw_barcode_list]
 
 
-items = BarcodeInformationExtractor('C:\\Users\\Akhilesh\\Desktop\\TrashAndGo\\barcode3.jpg').barcode_list
+items = BarcodeInformationExtractor('C:\\Users\\Akhilesh\\Desktop\\TrashAndGo\\barcode_images\\barcode9.jpg').barcode_list
 for item in items:
     print(item.barcode_number)
     print(item.product_name)
