@@ -14,11 +14,6 @@ product_database = {
 }
 
 
-class CSVWriter():
-    def __init__(self, barcode_data):
-        pass
-
-
 class Product():
     def __init__(self, barcode_data):
         self.barcode_number = barcode_data[0]
